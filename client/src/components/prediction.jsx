@@ -43,7 +43,7 @@ function WaterQualityAnalysis() {
 
         if (rawTurbidityValue) {
           const initialTurbidityValue = parseFloat(rawTurbidityValue.trim());
-          setTurbidityValue(initialTurbidityValue);
+          setTurbidityValue(initialTurbidityValue / 2);
         }
       });
   };
@@ -63,8 +63,8 @@ function WaterQualityAnalysis() {
 
     if (
       (phValue > 6.50 && phValue < 8.50) &&
-      (tdsValue > 80 && tdsValue < 130) &&
-      (turbidityValue > 2700 && turbidityValue < 2800)
+      (tdsValue > 80 && tdsValue < 200) &&
+      (turbidityValue > 500 && turbidityValue < 1500)
     ) {
       newIsWaterDrinkable = true;
     } else {

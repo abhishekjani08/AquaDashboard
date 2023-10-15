@@ -1,0 +1,89 @@
+/* Table Container */
+.table-container {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Add horizontal scroll if needed */
+  }
+  
+  /* Data Table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+  }
+  
+  /* Table Header */
+  .data-table th {
+    background-color: #f2f2f2;
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    text-align: center; /* Center align the header text */
+    font-weight: bold;
+  }
+  
+  .data-table th:first-child {
+    border-top-left-radius: 5px;
+  }
+  
+  .data-table th:last-child {
+    border-top-right-radius: 5px;
+  }
+  
+  /* Table Data Cells */
+  .data-table td {
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    text-align: center; /* Center align cell content */
+  }
+  
+  /* Alternate Row Coloring */
+  .data-table tr:nth-child(even) {
+    background-color: #f5f5f5;
+  }
+  
+  /* Hover Effect */
+  .data-table tr:hover {
+    background-color: #e0e0e0;
+    transition: background-color 0.2s; /* Add a smooth hover effect */
+  }
+  
+  /* Scrollbar Styling (Webkit Browsers) */
+  .table-container::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  
+  /* Date Header */
+  .date-header {
+    text-align: center;
+    background-color: #3a77b4;
+    color: #ffffff;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 0; /* Add some padding to the date header */
+  }
+  
+  /* Date Header Text */
+  .headerTxt {
+    text-align: center;
+    font-size: 18px;
+  }
+  .nab{
+    color:black
+  }

@@ -1,8 +1,9 @@
 
 
 import '../css/HomePage.css'
-import logo from '../images/aqua.png'
+// import logo from '../images/aqua.png'
 import Prediction from '../components/prediction'
+import Navbar from '../components/Navbar'
 const HomePage = () => {
 
 
@@ -10,32 +11,7 @@ const HomePage = () => {
     <>
        <div className="header">
         <div className="container">
-    <nav className="navbar">
-    
-        <span className="navbar-toggle" id="js-navbar-toggle">
-                <i className="fas fa-bars"></i>
-            </span>
-       
-        <a style={{marginTop:'-10vh', marginLeft:'-5vw' ,height:'20vh', width:'20vw'}}  href="#"className="logo">
-          <img sizes='5' src={logo} alt=""  />
-        </a>
-        <ul className="main-nav" id="js-menu">
-          <li>
-            <a href="/" className="nav-links">Home</a>
-          </li>
-          <li>
-            <a href="/analysis" className="nav-links">Analysis</a>
-          </li>
-          {/* <li>
-            <a href="#" className="nav-links">Blog</a>
-          </li> */}
-          {/* <li>
-            <a href="#" className="nav-links">Contact Us</a>
-          </li> */}
-        
-        </ul>
-       
-      </nav>
+   <Navbar/>
 </div>
 
 

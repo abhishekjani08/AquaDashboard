@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Chart from '../components/Chart';
 import '../css/Analysis.css'
+import Navbar from '../components/Navbar2'
+
 
 const fieldIds = [1, 2, 3];
 
@@ -46,32 +48,7 @@ const HomePage = () => {
   return (
     <>
     <div className='analyze'>
-    <nav className="navbar">
-    
-    <span className="navbar-toggle" id="js-navbar-toggle">
-            <i className="fas fa-bars"></i>
-        </span>
-   
-    <a style={{fontSize:'30px', color:'white', fontWeight:'800',marginLeft:'3vw'}}  href="#"className="logo">
-     <h1>AquaLizer</h1>
-    </a>
-    <ul className="main-nav" id="js-menu">
-      <li>
-        <a href="/" className="nav-links nab">Home</a>
-      </li>
-      <li>
-        <a href="/analysis" className="nav-links nab">Analysis</a>
-      </li>
-      {/* <li>
-        <a href="#" className="nav-links">Blog</a>
-      </li> */}
-      {/* <li>
-        <a href="#" className="nav-links">Contact Us</a>
-      </li> */}
-    
-    </ul>
-   
-  </nav>
+   <Navbar/>
       <div className="m-8 mt-3 grid grid-cols-2" style={{marginTop:'15vh'}}>
         {fieldIds.map((fieldId) => (
           <Chart
