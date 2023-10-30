@@ -6,7 +6,7 @@ export default function Navbar() {
   return (
     <div>
       <nav className="navbar">
-        <img src={logo} alt="Logo" className="w-[250px] h-[250px]" /> {/* Add the logo image here */}
+        <img src={logo} alt="Logo" className="w-[15%] h-auto" /> {/* Add the logo image here */}
         <span className="navbar-toggle" id="js-navbar-toggle">
           <i className="fas fa-bars"></i>
         </span>
