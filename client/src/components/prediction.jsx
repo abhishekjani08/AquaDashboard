@@ -1,117 +1,94 @@
-import { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { Toast } from 'react-bootstrap';
 import '../css/prediction.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { IgrRadialGaugeModule } from 'igniteui-react-gauges';
+import { IgrRadialGauge, IgrRadialGaugeRange } from 'igniteui-react-gauges';
+
+IgrRadialGaugeModule.register();
 
 function WaterQualityAnalysis() {
-  const [phValue, setPhValue] = useState(0);
-  const [tdsValue, setTDSValue] = useState(0);
-  const [turbidityValue, setTurbidityValue] = useState(0);
-  const [isWaterDrinkable, setIsWaterDrinkable] = useState(true);
-  const [showAlert, setShowAlert] = useState(false); // State to control toast visibility
+  const [temp1, setTemp1] = useState(0);
+  const [temp2, setTemp2] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    // Fetch initial data from APIs
     fetchData();
   }, []);
 
   const fetchData = () => {
-    // Sample function to fetch data from APIs
-    fetch('https://environment-monitoring.onrender.com/fields-data/1')
+    fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v5')
       .then((response) => response.json())
       .then((data) => {
-        const latestData = data[data.length - 1];
-        const initialPhValue = parseFloat(latestData.field1.trim());
-        setPhValue(initialPhValue);
+        setTemp1(data);
+        checkIsWaterDrinkable(data);
       });
 
-    fetch('https://environment-monitoring.onrender.com/fields-data/2')
+    fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v6')
       .then((response) => response.json())
       .then((data) => {
-        const latestData = data[data.length - 1];
-        const initialTDSValue = parseFloat(latestData.field2.trim());
-        setTDSValue(initialTDSValue);
-      });
-
-    fetch('https://environment-monitoring.onrender.com/fields-data/3')
-      .then((response) => response.json())
-      .then((data) => {
-        const latestData = data[data.length - 1];
-        const rawTurbidityValue = latestData.field3;
-
-        if (rawTurbidityValue) {
-          const initialTurbidityValue = parseFloat(rawTurbidityValue.trim());
-          setTurbidityValue(initialTurbidityValue / 2);
-        }
+        setTemp2(data);
+        checkIsWaterDrinkable(data);
       });
   };
 
   useEffect(() => {
-    // Set up an interval to periodically check for new data
     const interval = setInterval(() => {
-      fetchData(); // Fetch new data and update the state
-    }, 15000); // Adjust the interval as needed
+      fetchData();
+    }, 15000);
 
     return () => clearInterval(interval);
-  }, []); // Empty dependency array ensures this effect only runs on mount
+  }, []);
 
-  useEffect(() => {
-    // Implement real-time analysis
-    let newIsWaterDrinkable = false;
-
-    if (
-      (phValue > 6.50 && phValue < 8.50) &&
-      (tdsValue > 80 && tdsValue < 200) &&
-      (turbidityValue > 500 && turbidityValue < 1500)
-    ) {
-      newIsWaterDrinkable = true;
+  const checkIsWaterDrinkable = (temperatureValue) => {
+    if (temperatureValue > 6.50 && temperatureValue < 8.50) {
+      setShowAlert(false);
     } else {
-      newIsWaterDrinkable = false;
-      // Show the toast when water is not drinkable
       setShowAlert(true);
     }
-    setIsWaterDrinkable(newIsWaterDrinkable);
-  }, [phValue, tdsValue, turbidityValue]);
+  };
 
   return (
-    <div className="container">
-      
-      <div className={isWaterDrinkable ? "drinkable" : "not-drinkable"}>
-        <h1>Water Quality Analysis</h1>
-        {isWaterDrinkable ? (
-          <p className="water">Water is drinkable</p>
+    <div className="container ml-19">
+      <div className={showAlert ? "not-drinkable" : "drinkable"}>
+        <h1 className="text-center">Temperature Analysis</h1>
+        {showAlert ? (
+          <p className="water">Water is not good for Shrimps</p>
         ) : (
-          <p className="water">Water is not drinkable</p>
+          <p className="water">Water is good for Shrimps</p>
         )}
       </div>
-      <div className="parameter-container">
-        <p>
-          <span className="par">pH Value</span> <br />
-          <span className="val">{phValue}</span>
-        </p>
-        <p>
-          <span className="par">TDS Value</span> <br />
-          <span className="val">{tdsValue}</span>
-        </p>
-        <p>
-          <span className="par">Turbidity Value</span> <br />
-          <span className="val">{turbidityValue}</span>
-        </p>
+      <div className='flex'>
+        <div className="gauge-container">
+          <IgrRadialGauge height="400px" width="400px" value={temp1} interval={5} minimumValue={0} maximumValue={100}>
+            <IgrRadialGaugeRange key="range1" startValue={0} endValue={30} brush="red" />
+            <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
+            <IgrRadialGaugeRange key="range3" startValue={60} endValue={100} brush="green" />
+          </IgrRadialGauge>
+          <h2 className='font-bold text-2xl'>Temperature Sensor 1 Value: {temp1}</h2>
+        </div>
+        <div className="gauge-container">
+          <IgrRadialGauge height="400px" width="400px" value={temp2} interval={5} minimumValue={0} maximumValue={100}>
+            <IgrRadialGaugeRange key="range1" startValue={0} endValue={30} brush="red" />
+            <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
+            <IgrRadialGaugeRange key="range3" startValue={60} endValue={100} brush="green" />
+          </IgrRadialGauge>
+          <h2 className='font-bold text-2xl'>Temperature Sensor 2 Value: {temp2}</h2>
+        </div>
       </div>
       {showAlert && (
         <Toast
-        style={{marginLeft:'72vw',marginTop:'-8vh', backgroundColor:'rgb(255, 49, 49)',color:'white'}}
+          style={{ marginLeft: '72vw', marginTop: '-8vh', backgroundColor: 'rgb(255, 49, 49)', color: 'white' }}
           onClose={() => setShowAlert(false)}
           show={showAlert}
-          delay={2000} // Auto-dismiss the toast after 5 seconds
+          delay={2000}
           autohide
         >
           <Toast.Header>
             <strong className="mr-auto">Alert</strong>
           </Toast.Header>
-          <Toast.Body>Water is not drinkable. Please take necessary action.</Toast.Body>
+          <Toast.Body>Water is not good for Shrimps. Please take necessary action.</Toast.Body>
         </Toast>
       )}
     </div>
