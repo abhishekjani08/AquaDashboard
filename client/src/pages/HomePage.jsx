@@ -7,7 +7,7 @@ const HomePage = () => {
 
   return (
     <>
-      <div className="header">
+      {/* <div className="header">
         <div className="container">
           <Navbar />
         </div>
@@ -17,7 +17,7 @@ const HomePage = () => {
           <h1 className='head'>Revolutionalizing Shrimp Farming with IOT Based Monitoring.</h1>
         </div>
 
-      </div>
+      </div> */}
 
       <Prediction />
 
