@@ -72,37 +72,42 @@ function WaterQualityAnalysis() {
 
   const updateChart = (data1, data2) => {
     const ctx = document.getElementById('myChart').getContext('2d');
-
-    const newData = {
-      labels: [new Date().toLocaleTimeString()],
-      datasets: [{
-        label: 'Temperature Sensor 1',
-        data: [data1],
-        fill: false,
-        borderColor: 'rgba(255, 26, 104, 1)',
-        backgroundColor: 'rgba(255, 26, 104, 0.2)',
-        borderWidth: 1
-      }, {
-        label: 'Temperature Sensor 2',
-        data: [data2],
-        fill: false,
-        borderColor: 'rgba(54, 162, 235, 1)',
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderWidth: 1
-      }]
-    };
-
+    const maxDataPoints = 15;
+  
     if (myChart) {
       // If chart exists, update the data
-      myChart.data.labels.push(newData.labels[0]);
+      if (myChart.data.labels.length >= maxDataPoints) {
+        myChart.data.labels.shift(); // Remove the first label
+        myChart.data.datasets.forEach(dataset => {
+          dataset.data.shift(); // Remove the first data point from each dataset
+        });
+      }
+      myChart.data.labels.push(new Date().toLocaleTimeString());
       myChart.data.datasets[0].data.push(data1);
       myChart.data.datasets[1].data.push(data2);
       myChart.update();
     } else {
-      // If chart does not exist, create it
+      // If chart does not exist, create it with initial data
       myChart = new Chart(ctx, {
         type: 'line',
-        data: newData,
+        data: {
+          labels: [new Date().toLocaleTimeString()],
+          datasets: [{
+            label: 'Temperature Sensor 1',
+            data: [data1],
+            fill: false,
+            borderColor: 'rgba(255, 26, 104, 1)',
+            backgroundColor: 'rgba(255, 26, 104, 0.2)',
+            borderWidth: 1
+          }, {
+            label: 'Temperature Sensor 2',
+            data: [data2],
+            fill: false,
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderWidth: 1
+          }]
+        },
         options: {
           scales: {
             y: {
@@ -112,22 +117,22 @@ function WaterQualityAnalysis() {
             }
           },
           animation: {
-            duration: 5 // No animation to make the update instant
+            duration: 0 // No animation to make the update instant
           }
         }
       });
     }
   };
-
+  
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
       fetchData();
-    }, 10000);
-
+    }, 2000); // Fetch data every 10 seconds
+  
     return () => clearInterval(interval);
   }, []);
-
+  
 
   const checkIsWaterDrinkable = (temperatureValue) => {
     if (temperatureValue > 25 && temperatureValue < 32) {
