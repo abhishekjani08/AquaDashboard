@@ -1,60 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import { Toast } from 'react-bootstrap';
 import '../css/prediction.css';
 import logo from '../images/logo.png';
 
-import ReactApexChart from 'react-apexcharts';
 import { IgrRadialGaugeModule } from 'igniteui-react-gauges';
 import { IgrRadialGauge, IgrRadialGaugeRange } from 'igniteui-react-gauges';
 
 IgrRadialGaugeModule.register();
 
 function WaterQualityAnalysis() {
-  const [temp1, setTemp1] = useState([]);
-  const [temp2, setTemp2] = useState([]);
+  const [temp1, setTemp1] = useState(0);
+  const [temp2, setTemp2] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
 
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isPagesMenuOpen, setIsPagesMenuOpen] = useState(false);
-
   const containerClasses = `flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`;
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+
+  let myChart;
+
+  const fetchData = async () => {
+    try {
+      const response1 = await fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v5');
+      const response2 = await fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v6');
+
+      const data1 = await response1.json();
+      const data2 = await response2.json();
+
+      setTemp1(data1);
+      setTemp2(data2);
+
+      console.log("Temp Sensor 1 Data: ", data1);
+      console.log("Temp Sensor 2 Data: ", data2);
+
+      updateChart(data1, data2);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  const fetchData = () => {
-    fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v5')
-      .then((response) => response.json())
-      .then((data) => {
-        setTemp1(data);
-        // Call a function to create/update the chart
-      });
+  const updateChart = (data1, data2) => {
+    const ctx = document.getElementById('myChart').getContext('2d');
 
-    fetch('https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v6')
-      .then((response) => response.json())
-      .then((data) => {
-        setTemp2(data);
-        // Call a function to create/update the chart
-      });
+    if (myChart) {
+      myChart.update();
+    }
+
+    const chartData = {
+      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      datasets: [{
+        label: 'Temperature Sensor 1',
+        data: data1, // Replace with your fetched data
+        backgroundColor: 'rgba(255, 26, 104, 0.2)',
+        borderColor: 'rgba(255, 26, 104, 1)',
+        borderWidth: 1,
+      }, {
+        label: 'Temperature Sensor 2',
+        data: data2, // Replace with your fetched data
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      }],
+    };
+
+    const chartConfig = {
+      type: 'bar',
+      data: chartData,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+
+    myChart = new Chart(ctx, chartConfig);
   };
 
   useEffect(() => {
-    fetchData(); // Fetch data when the component mounts
-  }, []);
-
-  useEffect(() => {
+    fetchData();
     const interval = setInterval(() => {
       fetchData();
-    }, 15000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
+
 
   const checkIsWaterDrinkable = (temperatureValue) => {
     if (temperatureValue > 6.50 && temperatureValue < 8.50) {
@@ -73,24 +109,6 @@ function WaterQualityAnalysis() {
         ) : (
           <p className="water">Water is good for Shrimps</p>
         )}
-      </div> */}
-      {/* <div className='flex'>
-        <div className="gauge-container">
-          <IgrRadialGauge height="400px" width="400px" value={temp1} interval={5} minimumValue={0} maximumValue={100}>
-            <IgrRadialGaugeRange key="range1" startValue={0} endValue={30} brush="red" />
-            <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
-            <IgrRadialGaugeRange key="range3" startValue={60} endValue={100} brush="green" />
-          </IgrRadialGauge>
-          <h2 className='font-bold text-2xl'>Temperature Sensor 1 Value: {temp1}</h2>
-        </div>
-        <div className="gauge-container">
-          <IgrRadialGauge height="400px" width="400px" value={temp2} interval={5} minimumValue={0} maximumValue={100}>
-            <IgrRadialGaugeRange key="range1" startValue={0} endValue={30} brush="red" />
-            <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
-            <IgrRadialGaugeRange key="range3" startValue={60} endValue={100} brush="green" />
-          </IgrRadialGauge>
-          <h2 className='font-bold text-2xl'>Temperature Sensor 2 Value: {temp2}</h2>
-        </div>
       </div> */}
       <div className={containerClasses}>
         {/* SideBar */}
@@ -353,7 +371,7 @@ function WaterQualityAnalysis() {
                   </div>
                   <div className="col-span-12 mt-5">
                     <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
-                      <div className="bg-white shadow-lg p-4">
+                      {/* <div className="bg-white shadow-lg p-4">
                         <IgrRadialGauge height="400px" width="400px" value={temp1} interval={5} minimumValue={0} maximumValue={100}>
                           <IgrRadialGaugeRange key="range1" startValue={0} endValue={30} brush="red" />
                           <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
@@ -366,7 +384,9 @@ function WaterQualityAnalysis() {
                           <IgrRadialGaugeRange key="range2" startValue={30} endValue={60} brush="yellow" />
                           <IgrRadialGaugeRange key="range3" startValue={60} endValue={100} brush="green" />
                         </IgrRadialGauge>
-                      </div>
+                      </div> */}
+                      <canvas id="myChart" width="400" height="200"></canvas>
+                      <div id="chartVersion"></div>
                     </div>
                   </div>
                   {/* <div className="col-span-12 mt-5">

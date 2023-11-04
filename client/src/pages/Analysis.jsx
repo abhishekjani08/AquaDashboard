@@ -5,11 +5,11 @@ import '../css/Analysis.css'
 import Navbar from '../components/Navbar2'
 
 
-const fieldIds = [1, 2, 3];
+const fieldIds = [1, 2];
 
 const fetchData = async (fieldId) => {
   const response = await axios.get(
-    `https://environment-monitoring.onrender.com/fields-data/${fieldId}`
+    `https://blynk.cloud/external/api/get?token=WfQITWPhO1JeF3zrRGXvt09vi14Ekms-&v${port}v6`
   );
   return response.data;
 };
@@ -47,35 +47,33 @@ const HomePage = () => {
 
   return (
     <>
-    <div className='analyze'>
-   <Navbar/>
-      <div className="m-8 mt-3 grid grid-cols-2" style={{marginTop:'15vh'}}>
-        {fieldIds.map((fieldId) => (
-          <Chart
-            key={fieldId}
-            fieldId={fieldData[`field${fieldId}Id`]}
-            fieldData={fieldData[`field${fieldId}Data`]}
-            fieldName={
-              fieldId === 1
-                ? 'pH Value'
-                : fieldId === 2
-                ? 'TDS Value'
-                : fieldId === 3
-                ? 'Turbidity'
-                : ''
-            }
-            fieldColor={
-              fieldId === 1
-                ? 'green'
-                : fieldId === 2
-                ? 'aqua'
-                : fieldId === 3
-                ? 'brown'
-                : ''
-            }
-          />
-        ))}
-      </div>
+      <div className='analyze'>
+        <Navbar />
+        <div className="m-8 mt-3 grid grid-cols-2" style={{ marginTop: '15vh' }}>
+          {fieldIds.map((fieldId) => (
+            <Chart
+              key={fieldId}
+              fieldId={fieldData[`field${fieldId}Id`]}
+              fieldData={fieldData[`field${fieldId}Data`]}
+              fieldName={
+                fieldId === 1
+                  ? 'Temperature Sensor 1'
+                  : fieldId === 2
+                    ? 'Temperature Sensor 2'
+                    : ''
+              }
+              fieldColor={
+                fieldId === 1
+                  ? 'green'
+                  : fieldId === 2
+                    ? 'aqua'
+                    : fieldId === 3
+                      ? 'brown'
+                      : ''
+              }
+            />
+          ))}
+        </div>
       </div>
     </>
   );
