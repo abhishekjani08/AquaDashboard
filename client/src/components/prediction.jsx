@@ -4,7 +4,6 @@ import Chart from 'chart.js/auto';
 import { Toast } from 'react-bootstrap';
 import '../css/prediction.css';
 import logo from '../images/logo.png';
-
 import { IgrRadialGaugeModule } from 'igniteui-react-gauges';
 import { IgrRadialGauge, IgrRadialGaugeRange } from 'igniteui-react-gauges';
 
@@ -35,7 +34,7 @@ function WaterQualityAnalysis() {
   };
 
   const updateButtonState = (buttonNumber, newState) => {
-    const token = 'YOUR_BLYNK_TOKEN';
+    const token = 'WfQITWPhO1JeF3zrRGXvt09vi14Ekms-';
 
     fetch(`https://blynk.cloud/external/api/update?token=${token}&v${buttonNumber}=${newState}`)
       .then((response) => response.json())
@@ -69,59 +68,69 @@ function WaterQualityAnalysis() {
     }
   };
 
+  // let myChart; // Define myChart outside so it's accessible globally
+
   const updateChart = (data1, data2) => {
     const ctx = document.getElementById('myChart').getContext('2d');
 
-    if (myChart) {
-      myChart.destroy();
-    }
-
-    const chartData = {
+    const newData = {
       labels: [new Date().toLocaleTimeString()],
       datasets: [{
         label: 'Temperature Sensor 1',
         data: [data1],
-        backgroundColor: 'rgba(255, 26, 104, 0.2)',
+        fill: false,
         borderColor: 'rgba(255, 26, 104, 1)',
-        borderWidth: 1,
-      },
-      {
+        backgroundColor: 'rgba(255, 26, 104, 0.2)',
+        borderWidth: 1
+      }, {
         label: 'Temperature Sensor 2',
         data: [data2],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        fill: false,
         borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-      }
-      ],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderWidth: 1
+      }]
     };
 
-    const chartConfig = {
-      type: 'bar',
-      data: chartData,
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
+    if (myChart) {
+      // If chart exists, update the data
+      myChart.data.labels.push(newData.labels[0]);
+      myChart.data.datasets[0].data.push(data1);
+      myChart.data.datasets[1].data.push(data2);
+      myChart.update();
+    } else {
+      // If chart does not exist, create it
+      myChart = new Chart(ctx, {
+        type: 'line',
+        data: newData,
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              min: 20,
+              max: 40,
+            }
+          },
+          animation: {
+            duration: 5 // No animation to make the update instant
           }
         }
-      }
-    };
-
-    myChart = new Chart(ctx, chartConfig);
+      });
+    }
   };
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
       fetchData();
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
 
   const checkIsWaterDrinkable = (temperatureValue) => {
-    if (temperatureValue > 6.50 && temperatureValue < 8.50) {
+    if (temperatureValue > 25 && temperatureValue < 32) {
       setShowAlert(false);
     } else {
       setShowAlert(true);
@@ -145,7 +154,7 @@ function WaterQualityAnalysis() {
             <div className="text-white">
               <div className="flex p-2 bg-gray-800">
                 <div className="flex py-3 px-2 items-center">
-                  <p className="text-2xl text-green-500 font-semibold">AS</p>
+                  {/* <p className="text-2xl text-green-500 font-semibold">AS</p> */}
                   <p className="ml-2 font-semibold italic">DASHBOARD</p>
                 </div>
               </div>
@@ -260,19 +269,17 @@ function WaterQualityAnalysis() {
                 <div className="grid grid-cols-12 col-span-12 gap-6 xxl:col-span-9">
                   <div className="col-span-12 mt-8">
                     <div className="flex items-center h-10 intro-y">
-                      <h2 className="mr-5 text-lg font-medium truncate">Dashboard for AquaShrimp Temperature Sensor</h2>
+                      <h2 className="mr-5 text-lg font-medium truncate">Dashboard of our IOT System</h2>
                     </div>
                     <div className="grid grid-cols-12 gap-6 mt-5">
                       <a className="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
                         href="#">
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-blue-400"
-                              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 12 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2a2 2 0 00-2 2v12a2 2 0 001 1.732V18a2 2 0 11-2 0v-1.268A2 2 0 007 16V4a2 2 0 114 0v12a2 2 0 001.732 1h.536A2 2 0 0015 16V4a2 2 0 00-2-2z" />
                             </svg>
+
                             {/* <div
                               className="bg-green-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
                               <span className="flex items-center">30%</span>
@@ -291,11 +298,8 @@ function WaterQualityAnalysis() {
                         href="#">
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-yellow-400"
-                              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 12 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2a2 2 0 00-2 2v12a2 2 0 001 1.732V18a2 2 0 11-2 0v-1.268A2 2 0 007 16V4a2 2 0 114 0v12a2 2 0 001.732 1h.536A2 2 0 0015 16V4a2 2 0 00-2-2z" />
                             </svg>
                             {/* <div
                               className="bg-red-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
@@ -314,9 +318,14 @@ function WaterQualityAnalysis() {
                       <a className={` cursor-pointer transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white ${button1State === 1 ? 'bg-green-500' : 'bg-red-500'}`} onClick={toggleButton1}>
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={button1State === 1 ? "M7 12l3-3 3 3 4-4" : "M5 13l4-4 4 4"} />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-7 w-7">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 -7v14" />
                             </svg>
+
+                            {/* <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+  <rect width="18" height="10" x="1" y="5" rx="5" />
+</svg> */}
+
                             <div className={`rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm ${button1State === 1 ? 'bg-blue-500' : 'bg-yellow-500'}`}>
                               <span className="flex items-center">{button1State === 1 ? 'ON' : 'OFF'}</span>
                             </div>
@@ -331,8 +340,8 @@ function WaterQualityAnalysis() {
                       <a className={` cursor-pointer transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white ${button2State === 1 ? 'bg-green-500' : 'bg-red-500'}`} onClick={toggleButton2}>
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={button2State === 1 ? "M7 12l3-3 3 3 4-4" : "M5 13l4-4 4 4"} />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-7 w-7">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 -7v14" />
                             </svg>
                             <div className={`rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm ${button2State === 1 ? 'bg-blue-500' : 'bg-yellow-500'}`}>
                               <span className="flex items-center">{button2State === 1 ? 'ON' : 'OFF'}</span>
