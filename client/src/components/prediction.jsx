@@ -15,10 +15,37 @@ function WaterQualityAnalysis() {
   const [temp2, setTemp2] = useState(0);
   const [showAlert, setShowAlert] = useState(false);
 
+  const [button1State, setButton1State] = useState(0);
+  const [button2State, setButton2State] = useState(0);
+
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const containerClasses = `flex h-screen bg-gray-800 ${isSideMenuOpen ? 'overflow-hidden' : ''}`;
   const [isOpen, setIsOpen] = useState(false);
 
+  const toggleButton1 = () => {
+    const newState = button1State === 0 ? 1 : 0;
+    setButton1State(newState);
+    updateButtonState(1, newState);
+  };
+
+  const toggleButton2 = () => {
+    const newState = button2State === 0 ? 1 : 0;
+    setButton2State(newState);
+    updateButtonState(2, newState);
+  };
+
+  const updateButtonState = (buttonNumber, newState) => {
+    const token = 'YOUR_BLYNK_TOKEN';
+
+    fetch(`https://blynk.cloud/external/api/update?token=${token}&v${buttonNumber}=${newState}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(`Button ${buttonNumber} state updated to ${newState}`);
+      })
+      .catch((error) => {
+        console.error(`Error updating button state for Button ${buttonNumber}: ${error}`);
+      });
+  };
 
   let myChart;
 
@@ -46,24 +73,26 @@ function WaterQualityAnalysis() {
     const ctx = document.getElementById('myChart').getContext('2d');
 
     if (myChart) {
-      myChart.update();
+      myChart.destroy();
     }
 
     const chartData = {
-      labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      labels: [new Date().toLocaleTimeString()],
       datasets: [{
         label: 'Temperature Sensor 1',
-        data: data1, // Replace with your fetched data
+        data: [data1],
         backgroundColor: 'rgba(255, 26, 104, 0.2)',
         borderColor: 'rgba(255, 26, 104, 1)',
         borderWidth: 1,
-      }, {
+      },
+      {
         label: 'Temperature Sensor 2',
-        data: data2, // Replace with your fetched data
+        data: [data2],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         borderColor: 'rgba(54, 162, 235, 1)',
         borderWidth: 1,
-      }],
+      }
+      ],
     };
 
     const chartConfig = {
@@ -77,7 +106,6 @@ function WaterQualityAnalysis() {
         }
       }
     };
-
 
     myChart = new Chart(ctx, chartConfig);
   };
@@ -222,39 +250,6 @@ function WaterQualityAnalysis() {
                   </span>
                 </div>
               </div>
-
-              <ul className="flex items-center flex-shrink-0 space-x-6">
-                {/* <li className="relative"> */}
-                {/* <button
-                    className="p-2 bg-white text-green-400 align-middle rounded-full hover:text-white hover:bg-green-400 focus:outline-none "
-                    aria-label="Notifications" aria-haspopup="true">
-                    <div className="flex items-cemter">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
-                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                      </svg>
-                    </div>
-                    <span aria-hidden="true"
-                      className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"></span>
-                  </button> */}
-                {/* <template x-if="isNotificationsMenuOpen">
-                    <ul
-                      className="absolute right-0 w-56 p-2 mt-2 space-y-2 text-gray-600 bg-green-400 border border-green-500 rounded-md shadow-md">
-                      <li className="flex">
-                        <a className="text-white inline-flex items-center justify-between w-full px-2 py-1 text-sm font-semibold transition-colors duration-150 rounded-md hover:bg-gray-100 hover:text-gray-800"
-                          href="#">
-                          <span>Messages</span>
-                          <span
-                            className="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-600 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-600">
-                            13
-                          </span>
-                        </a>
-                      </li>
-                    </ul>
-                  </template> */}
-                {/* </li> */}
-              </ul>
             </div>
           </header>
 
@@ -316,57 +311,40 @@ function WaterQualityAnalysis() {
                           </div>
                         </div>
                       </a>
-                      {/* <a className="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
-                        href="#">
+                      <a className={` cursor-pointer transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white ${button1State === 1 ? 'bg-green-500' : 'bg-red-500'}`} onClick={toggleButton1}>
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-pink-600"
-                              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-                              <path strokeLinecap="round" strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={button1State === 1 ? "M7 12l3-3 3 3 4-4" : "M5 13l4-4 4 4"} />
                             </svg>
-                            <div
-                              className="bg-yellow-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                              <span className="flex items-center">30%</span>
+                            <div className={`rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm ${button1State === 1 ? 'bg-blue-500' : 'bg-yellow-500'}`}>
+                              <span className="flex items-center">{button1State === 1 ? 'ON' : 'OFF'}</span>
                             </div>
                           </div>
                           <div className="ml-2 w-full flex-1">
                             <div>
-                              <div className="mt-3 text-3xl font-bold leading-8">4.510</div>
-
-                              <div className="mt-1 text-base text-gray-600">Item Sales</div>
+                              <div className="mt-1 text-4xl text-gray-600">Button 1</div>
                             </div>
                           </div>
                         </div>
                       </a>
-                      <a className="transform  hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white"
-                        href="#">
+                      <a className={` cursor-pointer transform hover:scale-105 transition duration-300 shadow-xl rounded-lg col-span-12 sm:col-span-6 xl:col-span-3 intro-y bg-white ${button2State === 1 ? 'bg-green-500' : 'bg-red-500'}`} onClick={toggleButton2}>
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-green-400"
-                              fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={button2State === 1 ? "M7 12l3-3 3 3 4-4" : "M5 13l4-4 4 4"} />
                             </svg>
-                            <div
-                              className="bg-blue-500 rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm">
-                              <span className="flex items-center">30%</span>
+                            <div className={`rounded-full h-6 px-2 flex justify-items-center text-white font-semibold text-sm ${button2State === 1 ? 'bg-blue-500' : 'bg-yellow-500'}`}>
+                              <span className="flex items-center">{button2State === 1 ? 'ON' : 'OFF'}</span>
                             </div>
                           </div>
                           <div className="ml-2 w-full flex-1">
                             <div>
-                              <div className="mt-3 text-3xl font-bold leading-8">4.510</div>
-
-                              <div className="mt-1 text-base text-gray-600">Item Sales</div>
+                              <div className="mt-1 text-4xl text-gray-600">Button 2</div>
                             </div>
                           </div>
                         </div>
-                      </a> */}
+                      </a>
                     </div>
                   </div>
                   <div className="col-span-12 mt-5">
