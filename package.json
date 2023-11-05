@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon api/index",
+    "start": "node api/index",
     "server": "nodemon api/index",
     "client": "npm run client --prefix client",
     "build": "npm run build --prefix client",
