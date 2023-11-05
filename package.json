@@ -5,11 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon api/index",
-    "server": "nodemon api/index",
-    "client": "npm run client --prefix client",
+    "start": "node api/index.js",
+    "client": "cd client && npm start",
     "build": "npm run build --prefix client",
-    "dev": "concurrently \"npm start\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [],
   "author": "",
