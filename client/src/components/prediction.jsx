@@ -281,7 +281,7 @@ function WaterQualityAnalysis() {
                         href="#">
                         <div className="p-5">
                           <div className="flex justify-between">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-400" fill="none" viewBox="0 0 12 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-400" fill="none" viewBox="0 0 12 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2a2 2 0 00-2 2v12a2 2 0 001 1.732V18a2 2 0 11-2 0v-1.268A2 2 0 007 16V4a2 2 0 114 0v12a2 2 0 001.732 1h.536A2 2 0 0015 16V4a2 2 0 00-2-2z" />
                             </svg>
 
